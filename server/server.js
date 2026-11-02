@@ -35,6 +35,10 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+const DEFAULT_MONGODB_URI = 'mongodb+srv://sublivoexport_db_user:GOYUy3KwgRcgPOso@cluster0.0trx6bc.mongodb.net/sublivoexport_db';
+const DEFAULT_SUPERADMIN_EMAIL = 'zain@sublivoexport.com';
+const DEFAULT_SUPERADMIN_PASS = 'zainmustafa77865@';
+
 // Serverless friendly MongoDB Connection
 let cached = global.mongoose;
 if (!cached) {
@@ -45,7 +49,7 @@ const connectDB = async () => {
   if (cached.conn) {
     return cached.conn;
   }
-  const uri = process.env.MONGODB_URI;
+  const uri = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
   if (!uri) throw new Error('MONGODB_URI is missing. Please set it in Vercel Environment Variables.');
 
   if (!cached.promise) {
@@ -65,13 +69,19 @@ const connectDB = async () => {
 
 // Simple ping endpoint to check if API is alive (without DB connection)
 app.get('/api/ping', (req, res) => {
-  res.json({ message: 'pong', env: { hasMongo: !!process.env.MONGODB_URI }, dbState: mongoose.connection.readyState });
+  res.json({ 
+    message: 'pong', 
+    env: { 
+      hasMongo: !!(process.env.MONGODB_URI || DEFAULT_MONGODB_URI) 
+    }, 
+    dbState: mongoose.connection.readyState 
+  });
 });
 
 // Endpoint to test database connection and show exact error
 app.get('/api/test-db', async (req, res) => {
   try {
-    const uri = process.env.MONGODB_URI;
+    const uri = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
     if (!uri) {
       return res.status(500).json({ status: 'error', message: 'MONGODB_URI is empty' });
     }
@@ -255,8 +265,8 @@ const notifySubscribers = async (product) => {
 
 // Helper to dynamically read SuperAdmin env credentials directly from .env file or process.env
 const getSuperAdminEnv = () => {
-  let email = process.env.SUPERADMIN_EMAIL || '';
-  let pass = process.env.SUPERADMIN_PASS || '';
+  let email = process.env.SUPERADMIN_EMAIL || DEFAULT_SUPERADMIN_EMAIL;
+  let pass = process.env.SUPERADMIN_PASS || DEFAULT_SUPERADMIN_PASS;
   try {
     const fs = require('fs');
     const envPath = path.join(__dirname, '.env');

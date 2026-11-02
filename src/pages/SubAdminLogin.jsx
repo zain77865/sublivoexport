@@ -25,10 +25,10 @@ const SubAdminLogin = ({ setSubAdminToken, setSubAdminPermissions }) => {
         setSubAdminPermissions(data.permissions || []);
         navigate("/admin/dashboard");
       } else {
-        setError(data.message || "Invalid credentials");
+        setError(data.message || data.error || "Invalid credentials");
       }
-    } catch {
-      setError("Server error. Please try again.");
+    } catch (err) {
+      setError(err.message || "Server error. Please try again.");
     }
     setLoading(false);
   };

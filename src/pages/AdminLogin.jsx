@@ -22,10 +22,10 @@ const AdminLogin = ({ setAdminToken }) => {
         setLoginError('');
         navigate('/super-admin/dashboard');
       } else {
-        setLoginError(data.message || 'Invalid email or password');
+        setLoginError(data.message || data.error || 'Invalid email or password');
       }
     } catch (err) {
-      setLoginError('Server error, please try again later');
+      setLoginError(err.message || 'Server error, please try again later');
     }
   };
 
