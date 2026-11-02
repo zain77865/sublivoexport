@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserPlus, Package, ShoppingBag, MessageCircle, HelpCircle, Key, LogOut } from 'lucide-react';
+import { UserPlus, Package, ShoppingBag, Key, LogOut } from 'lucide-react';
 import ChangeCredentialsModal from './ChangeCredentialsModal';
 
 const AdminSidebar = ({
@@ -113,42 +113,6 @@ const AdminSidebar = ({
               }}
             >
               <ShoppingBag size={20} /> Orders
-            </button>
-          )}
-
-          {(!isSubAdmin || permissions.includes('chat')) && (
-            <button
-              onClick={() => {
-                navigate(isSubAdmin ? '/admin/chat' : '/super-admin/chat');
-                if (setMobileMenuOpen) setMobileMenuOpen(false);
-              }}
-              style={getBtnStyle('chat')}
-              onMouseEnter={e => {
-                if (activePage !== 'chat') e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-              }}
-              onMouseLeave={e => {
-                if (activePage !== 'chat') e.currentTarget.style.background = 'transparent';
-              }}
-            >
-              <MessageCircle size={20} /> Chat
-            </button>
-          )}
-
-          {(!isSubAdmin || permissions.includes('helpline')) && (
-            <button
-              onClick={() => {
-                navigate(isSubAdmin ? '/admin/chat?filter=helpline' : '/super-admin/chat?filter=helpline');
-                if (setMobileMenuOpen) setMobileMenuOpen(false);
-              }}
-              style={getBtnStyle('helpline')}
-              onMouseEnter={e => {
-                if (activePage !== 'helpline') e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-              }}
-              onMouseLeave={e => {
-                if (activePage !== 'helpline') e.currentTarget.style.background = 'transparent';
-              }}
-            >
-              <HelpCircle size={20} /> Help Chat
             </button>
           )}
 

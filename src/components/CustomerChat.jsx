@@ -190,7 +190,7 @@ const CustomerChat = ({ isOpen, onClose, product, setChatProduct }) => {
                   {msg.product.image && <img src={msg.product.image} alt="product" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />}
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: '12px', fontWeight: 'bold', lineHeight: 1.2 }}>{msg.product.title}</div>
-                    <div style={{ fontSize: '11px', opacity: 0.8 }}>Rs. {msg.product.price}</div>
+                    <div style={{ fontSize: '11px', opacity: 0.8 }}>${msg.product.price}</div>
                   </div>
                 </div>
               )}
@@ -211,7 +211,7 @@ const CustomerChat = ({ isOpen, onClose, product, setChatProduct }) => {
               <img src={product.images && product.images[0] ? product.images[0] : product.image} alt={product.title} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px' }} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{product.title}</div>
-                <div style={{ fontSize: '13px', color: 'var(--primary)' }}>Rs. {product.price}</div>
+                <div style={{ fontSize: '13px', color: 'var(--primary)' }}>${product.price}</div>
               </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '15px' }}>

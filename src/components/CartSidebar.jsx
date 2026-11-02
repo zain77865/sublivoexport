@@ -33,20 +33,25 @@ const CartSidebar = ({ isCartOpen, setIsCartOpen, cartItems, setCartItems, handl
           ) : (
             cartItems.map((item, idx) => (
               <div key={idx} style={{ position: 'relative', display: 'flex', gap: '15px', alignItems: 'center', background: 'rgba(255,255,255,0.05)', padding: '10px', borderRadius: '12px' }}>
-                <button onClick={() => setCartItems(prev => prev.filter(i => i.id !== item.id))} style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', padding: 0 }} aria-label="Remove item" title="Remove">
+                <button onClick={() => setCartItems(prev => prev.filter((_, i) => i !== idx))} style={{ position: 'absolute', top: '10px', right: '10px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', padding: 0 }} aria-label="Remove item" title="Remove">
                   <X size={16} className="hover-text-primary" />
                 </button>
                 <img src={item.image} alt={item.title} style={{ width: '70px', height: '70px', borderRadius: '8px', objectFit: 'cover' }} />
                 <div style={{ flex: 1, paddingRight: '20px' }}>
                   <p style={{ margin: '0 0 5px 0', fontSize: '14px', fontWeight: 'bold', lineHeight: 1.2 }}>{item.title}</p>
+                  {item.size && (
+                    <span style={{ fontSize: '11px', color: 'var(--primary)', background: 'rgba(245,166,35,0.12)', border: '1px solid rgba(245,166,35,0.3)', padding: '1px 6px', borderRadius: '4px', fontWeight: '600' }}>
+                      Size: {item.size}
+                    </span>
+                  )}
                   <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px', gap: '5px' }}>
-                    <button disabled={item.quantity <= 1} onClick={() => handleUpdateCartQuantity(item.id, item.quantity - 1)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', width: '24px', height: '24px', borderRadius: '4px', cursor: item.quantity <= 1 ? 'not-allowed' : 'pointer', opacity: item.quantity <= 1 ? 0.3 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>-</button>
+                    <button disabled={item.quantity <= 1} onClick={() => handleUpdateCartQuantity(item.id, item.quantity - 1, item.size)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', width: '24px', height: '24px', borderRadius: '4px', cursor: item.quantity <= 1 ? 'not-allowed' : 'pointer', opacity: item.quantity <= 1 ? 0.3 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>-</button>
                     <span style={{ fontSize: '14px', width: '20px', textAlign: 'center' }}>{item.quantity}</span>
-                    <button onClick={() => handleUpdateCartQuantity(item.id, item.quantity + 1)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', width: '24px', height: '24px', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+                    <button onClick={() => handleUpdateCartQuantity(item.id, item.quantity + 1, item.size)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', width: '24px', height: '24px', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
                   </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px', alignSelf: 'flex-end' }}>
-                  <p style={{ margin: 0, fontWeight: 'bold', fontSize: '16px', color: 'var(--primary)' }}>Rs. {item.price * item.quantity}</p>
+                  <p style={{ margin: 0, fontWeight: 'bold', fontSize: '16px', color: 'var(--primary)' }}>${item.price * item.quantity}</p>
                 </div>
               </div>
             ))
@@ -57,7 +62,7 @@ const CartSidebar = ({ isCartOpen, setIsCartOpen, cartItems, setCartItems, handl
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px', marginTop: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '18px', marginBottom: '20px' }}>
               <span>Subtotal:</span>
-              <span>Rs. {totalCartPrice}</span>
+              <span>${totalCartPrice}</span>
             </div>
             <button 
               className="btn-primary" 
@@ -65,7 +70,7 @@ const CartSidebar = ({ isCartOpen, setIsCartOpen, cartItems, setCartItems, handl
               onClick={() => {
                 setIsCartOpen(false);
                 if (cartItems.length > 0) {
-                  navigate(`/checkout/${cartItems[0].id || cartItems[0]._id}`, { state: { quantity: cartItems[0].quantity } });
+                  navigate('/checkout', { state: { items: cartItems, fromCart: true } });
                 }
               }}
             >

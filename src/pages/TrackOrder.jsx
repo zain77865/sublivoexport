@@ -93,7 +93,7 @@ const TrackOrder = () => {
               {order.product.image && <img src={order.product.image} alt={order.product.title} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '10px' }} />}
               <div>
                 <h4 style={{ margin: '0 0 8px 0', fontSize: '16px' }}>{order.product.title}</h4>
-                <p style={{ margin: 0, color: 'var(--text-muted)' }}>Qty: {order.quantity} • Rs. {order.totalAmount}</p>
+                <p style={{ margin: 0, color: 'var(--text-muted)' }}>Qty: {order.quantity} • ${order.totalAmount}</p>
               </div>
             </div>
 

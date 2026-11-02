@@ -1,6 +1,11 @@
 User-agent: *
+Allow: /
+Disallow: /admin
 Disallow: /super-admin/
-Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://multirecover.com/sitemap.xml
+# Crawl-delay for optimal indexing
+Crawl-delay: 1
+
+# SublivoExport - Custom Sportswear, Apparel & Shoes Exporter | Pakistan
+Sitemap: https://sublivoexport.com/sitemap.xml

@@ -236,7 +236,7 @@ const AdminOrders = ({ adminToken, setAdminToken, isSubAdmin, permissions = [] }
                       </div>
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <div style={{ fontWeight: '800', color: 'var(--primary)', fontSize: '16px' }}>Rs. {order.totalAmount}</div>
+                      <div style={{ fontWeight: '800', color: 'var(--primary)', fontSize: '16px' }}>${order.totalAmount}</div>
                       <div style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
                     </div>
                     <ChevronDown size={18} style={{ color: 'var(--text-muted)', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s', flexShrink: 0 }} />
@@ -252,6 +252,7 @@ const AdminOrders = ({ adminToken, setAdminToken, isSubAdmin, permissions = [] }
                           <div><span style={{ color: 'var(--text-muted)' }}>Name: </span><strong>{order.customer?.name}</strong></div>
                           <div><span style={{ color: 'var(--text-muted)' }}>Email: </span>{order.customer?.email}</div>
                           <div><span style={{ color: 'var(--text-muted)' }}>Phone: </span>{order.customer?.phone}</div>
+                          {order.customer?.country && <div><span style={{ color: 'var(--text-muted)' }}>Country: </span><strong>{order.customer.country}</strong></div>}
                           {order.customer?.city && <div><span style={{ color: 'var(--text-muted)' }}>City: </span><strong>{order.customer.city}</strong></div>}
                           <div><span style={{ color: 'var(--text-muted)' }}>Address: </span>{order.customer?.address}</div>
                         </div>
@@ -262,9 +263,20 @@ const AdminOrders = ({ adminToken, setAdminToken, isSubAdmin, permissions = [] }
                         <h4 style={{ margin: '0 0 12px', fontSize: '13px', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Product Details</h4>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '7px', fontSize: '14px' }}>
                           <div><span style={{ color: 'var(--text-muted)' }}>Product: </span><strong>{order.product?.title}</strong></div>
-                          <div><span style={{ color: 'var(--text-muted)' }}>Price: </span>Rs. {order.product?.price}</div>
+                          {order.product?.size && <div><span style={{ color: 'var(--text-muted)' }}>Size: </span><strong>{order.product.size}</strong></div>}
+                          {order.items && order.items.length > 0 && (
+                            <div style={{ marginTop: '8px', padding: '10px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.08)' }}>
+                              <span style={{ color: 'var(--primary)', fontSize: '12px', fontWeight: 'bold', display: 'block', marginBottom: '6px' }}>Item Breakdown:</span>
+                              {order.items.map((it, idx) => (
+                                <div key={idx} style={{ fontSize: '13px', marginBottom: '4px', display: 'flex', justifyContent: 'space-between' }}>
+                                  <span>• {it.title} {it.size ? `[Size: ${it.size}]` : ''} x{it.quantity}</span>
+                                  <strong style={{ color: 'white' }}>${it.price * it.quantity}</strong>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                           <div><span style={{ color: 'var(--text-muted)' }}>Qty: </span>{order.quantity}</div>
-                          <div><span style={{ color: 'var(--text-muted)' }}>Total: </span><strong style={{ color: 'var(--primary)' }}>Rs. {order.totalAmount}</strong></div>
+                          <div><span style={{ color: 'var(--text-muted)' }}>Total: </span><strong style={{ color: 'var(--primary)' }}>${order.totalAmount}</strong></div>
                           <div><span style={{ color: 'var(--text-muted)' }}>Payment: </span>{order.deliveryMethod}</div>
                         </div>
                       </div>

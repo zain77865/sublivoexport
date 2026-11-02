@@ -1,15 +1,38 @@
 import React, { useState, useRef } from 'react';
-import { Leaf, Shield, CheckCircle, ArrowRight, Star, Heart, Droplet, User, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { 
+  Globe, Truck, Award, ChevronLeft, ChevronRight, 
+  ArrowRight, CheckCircle, Star, Package, MessageCircle,
+  Phone, Mail, ShoppingBag, Zap, Shield, Users
+} from 'lucide-react';
 import ProductCard from '../components/ProductCard';
+import { Link } from 'react-router-dom';
 
-const Home = ({ products, handleAddToCart, onOpenChat, navigate }) => {
-  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+const PRODUCT_CATEGORIES = [
+  { id: 'football', icon: '⚽', name: 'Football Jerseys', desc: 'Custom sublimation & embroidered' },
+  { id: 'rugby', icon: '🏉', name: 'Rugby Shirts', desc: 'Heavy-duty performance fabric' },
+  { id: 'tshirts', icon: '👕', name: 'T-Shirts', desc: 'Custom print & blank wholesale' },
+  { id: 'polos', icon: '🎽', name: 'Polo Shirts', desc: 'Corporate & sports branding' },
+  { id: 'hoodies', icon: '🧥', name: 'Hoodies & Jackets', desc: 'Fleece, zip-up & pullover styles' },
+  { id: 'shorts', icon: '🩳', name: 'Shorts & Bottoms', desc: 'Mesh, dry-fit & performance' },
+  { id: 'shoes', icon: '👟', name: 'Sports Shoes', desc: 'Astro turf, indoor & outdoor' },
+  { id: 'accessories', icon: '🧤', name: 'Accessories', desc: 'Gloves, socks, caps & bags' },
+];
+
+const EXPORT_COUNTRIES = ['🇺🇸 USA', '🇬🇧 UK', '🇨🇦 Canada', '🇩🇪 Germany', '🇫🇷 France', '🇳🇱 Netherlands', '🇦🇺 Australia', '🇸🇦 Saudi Arabia'];
+
+const TESTIMONIALS = [
+  { name: 'James Mitchell', country: 'United Kingdom', flag: '🇬🇧', rating: 5, text: 'Absolutely outstanding quality! SublivoExport delivered 500 custom football jerseys for our club. The sublimation printing is perfect and delivery was on time. Will order again!' },
+  { name: 'Carlos Rodriguez', country: 'United States', flag: '🇺🇸', rating: 5, text: 'Best sportswear manufacturer I have worked with from Pakistan. The polo shirts and rugby uniforms are top quality. Highly recommend SublivoExport for bulk orders.' },
+  { name: 'Pierre Dubois', country: 'France', flag: '🇫🇷', rating: 5, text: 'We ordered custom hoodies and T-shirts for our sports academy. SublivoExport exceeded our expectations – premium quality at factory-direct prices. Amazing experience!' },
+];
+
+const Home = ({ products, handleAddToCart, navigate }) => {
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [activeCategory, setActiveCategory] = useState(null);
   const carouselRef = useRef(null);
 
-  const nextReview = () => setCurrentReviewIndex(prev => Math.min(prev + 1, 2));
-  const prevReview = () => setCurrentReviewIndex(prev => Math.max(prev - 1, 0));
-
-  const maxProducts = products.slice(0, 3);
+  const featuredProducts = products.filter(p => p.isFeatured);
+  const displayProducts = featuredProducts.length > 0 ? featuredProducts : products.slice(0, 6);
 
   const scrollLeft = () => {
     if (carouselRef.current) {
@@ -23,325 +46,376 @@ const Home = ({ products, handleAddToCart, onOpenChat, navigate }) => {
     }
   };
 
+  const handleWhatsApp = () => {
+    window.open('https://wa.me/923204615100?text=Hi SublivoExport, I am interested in placing a bulk order for sportswear.', '_blank');
+  };
+
+  const handleEmail = () => {
+    window.location.href = 'mailto:sublivoexport@gmail.com';
+  };
+
+  const handleInstagram = () => {
+    window.open('https://www.instagram.com/sublivoexport', '_blank');
+  };
+
   return (
     <>
-      {/* Hero Section with Video Background */}
-      <header className="video-hero">
-        <video
-          className="hero-video-bg"
-          autoPlay
-          muted
-          loop
-          playsInline
-        >
-          <source src="/MOR_MULTI_RECOVER_product_video_20260910213130.mp4" type="video/mp4" />
-        </video>
-        <div className="video-overlay-gradient"></div>
+      {/* ===== HERO SECTION ===== */}
+      <header className="sublivo-hero">
+        {/* Animated background */}
+        <div className="sublivo-hero-bg">
+          <div className="hero-orb orb-1"></div>
+          <div className="hero-orb orb-2"></div>
+          <div className="hero-grid-pattern"></div>
+        </div>
 
-        <div className="video-hero-content">
-          <div className="video-hero-main-text">
-            <span className="hero-tag glass">MOR - Premium Hair Care</span>
-            <h1 className="hero-title" style={{ textShadow: '0 8px 32px rgba(0,0,0,0.6)' }}>MULTI RECOVER</h1>
-            <h2 className="hero-subtitle" style={{ textShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>Hair Oil</h2>
-
-            <div className="hero-features" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
-              <span>Stronger Roots</span>
-              <span>Healthier Hair</span>
-              <span>Natural Care</span>
-            </div>
-
-            <p className="hero-desc" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)', maxWidth: '500px' }}>
-              The power of nature in every drop. MOR Multi Recover Hair Oil is specially formulated with natural oils and vitamins to nourish your hair, reduce hair fall and bring back its natural shine.
-            </p>
-
-            <div className="hero-badges">
-              <div className="badge">
-                <div className="badge-icon glass"><Leaf size={16} className="text-primary" /></div>
-                <span style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>100%<br />Natural Oils</span>
-              </div>
-              <div className="badge">
-                <div className="badge-icon glass"><Shield size={16} className="text-primary" /></div>
-                <span style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>No Harmful<br />Chemicals</span>
-              </div>
-              <div className="badge">
-                <div className="badge-icon glass"><CheckCircle size={16} className="text-primary" /></div>
-                <span style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>Safe for<br />All Hair Types</span>
-              </div>
-            </div>
+        <div className="sublivo-hero-content">
+          {/* Badge */}
+          <div className="sublivo-badge">
+            <span className="badge-dot"></span>
+            Custom Sportswear, Apparel & Shoes Exporter
           </div>
 
-          <div className="video-hero-bottom-right">
-            <button className="btn-primary" style={{ padding: '12px 24px' }} onClick={() => { const el = document.getElementById('product-details'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}>Buy Now</button>
-            <button
-              className="video-details-link"
-              style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'white' }}
-              onClick={() => { const el = document.getElementById('product-details'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
-              aria-label="Scroll to products"
+          {/* Main Heading */}
+          <h1 className="sublivo-hero-title">
+            <span className="sublivo-brand-word">SublivoExport</span>
+            <br />
+            <span className="sublivo-hero-subtitle-text">Custom Sportswear & Apparel</span>
+            <br />
+            <span className="sublivo-hero-tagline" style={{ color: 'var(--primary)', fontStyle: 'italic' }}>Manufactured in Pakistan · Exported Worldwide</span>
+          </h1>
+
+          <p className="sublivo-hero-desc">
+            We manufacture and export custom football jerseys, rugby shirts, t-shirts, polo shirts, hoodies & jackets, shorts, sports shoes and accessories worldwide. Supplying clubs, brands & distributors in 
+            <strong style={{ color: 'white' }}> USA, UK, Canada & Europe</strong>.
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="sublivo-hero-btns">
+            <Link to="/shop" className="btn-primary sublivo-hero-cta" style={{ textDecoration: 'none' }}>
+              <ShoppingBag size={18} /> Browse Products
+            </Link>
+            <button 
+              className="sublivo-whatsapp-btn sublivo-hero-cta"
+              onClick={handleWhatsApp}
             >
-              <ArrowRight size={24} />
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.49"/></svg>
+              WhatsApp Us
             </button>
           </div>
+
+          {/* Stats Row */}
+          <div className="sublivo-stats">
+            <div className="sublivo-stat">
+              <span className="stat-num">500+</span>
+              <span className="stat-label">Happy Clients</span>
+            </div>
+            <div className="sublivo-stat-divider"></div>
+            <div className="sublivo-stat">
+              <span className="stat-num">15+</span>
+              <span className="stat-label">Countries</span>
+            </div>
+            <div className="sublivo-stat-divider"></div>
+            <div className="sublivo-stat">
+              <span className="stat-num">10M+</span>
+              <span className="stat-label">Units Exported</span>
+            </div>
+            <div className="sublivo-stat-divider"></div>
+            <div className="sublivo-stat">
+              <span className="stat-num">8+</span>
+              <span className="stat-label">Years Experience</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="hero-scroll-indicator">
+          <div className="scroll-arrow"></div>
         </div>
       </header>
 
-      {/* Benefits Strip */}
-      <div id="benefits" className="benefits-strip">
-        <div className="benefit-item glass-panel">
-          <div className="badge-icon glass" style={{ width: '48px', height: '48px' }}><Leaf size={24} className="text-primary" /></div>
-          <div className="benefit-text">
-            <h4>Natural Ingredients</h4>
-            <p>Pure & Safe</p>
-          </div>
-        </div>
-        <div className="benefit-item glass-panel">
-          <div className="badge-icon glass" style={{ width: '48px', height: '48px' }}><Shield size={24} className="text-primary" /></div>
-          <div className="benefit-text">
-            <h4>Clinically Proven</h4>
-            <p>Effective Results</p>
-          </div>
-        </div>
-        <div className="benefit-item glass-panel">
-          <div className="badge-icon glass" style={{ width: '48px', height: '48px' }}><Star size={24} className="text-primary" /></div>
-          <div className="benefit-text">
-            <h4>Premium Quality</h4>
-            <p>100% Guaranteed</p>
-          </div>
+      {/* ===== EXPORT COUNTRIES TICKER ===== */}
+      <div className="countries-ticker glass" style={{ overflow: 'hidden', padding: '14px 0', margin: '0' }}>
+        <div className="ticker-track">
+          {[...EXPORT_COUNTRIES, ...EXPORT_COUNTRIES].map((c, i) => (
+            <span key={i} className="ticker-item">{c}</span>
+          ))}
         </div>
       </div>
 
-      {/* Product Details Section */}
-      <div id="product-details" className="product-carousel-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', position: 'relative' }}>
-        {maxProducts.length > 1 && (
-          <button 
-            onClick={scrollLeft} 
-            className="hover-scale desktop-arrow-btn left-arrow" 
-            style={{ 
-              padding: '12px', color: 'white', background: 'transparent', border: 'none', cursor: 'pointer', flexShrink: 0
-            }}>
-            <ChevronLeft size={48} />
-          </button>
-        )}
-        
-        <div ref={carouselRef} className="product-carousel" style={{ flex: 1, display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', scrollBehavior: 'smooth', width: '100%', scrollbarWidth: 'none', padding: '10px 0' }}>
-          {maxProducts.length > 0 ? (
-            maxProducts.map((product) => (
-              <div key={product.id} style={{ minWidth: '100%', scrollSnapAlign: 'start', display: 'flex', justifyContent: 'center' }}>
-                <div style={{ width: '100%' }}>
-                  <ProductCard product={product} onMoreDetailClick={() => navigate('/product-detail')} onAddToCart={handleAddToCart} onOpenChat={onOpenChat} />
+      {/* ===== WHY SUBLIVOEXPORT ===== */}
+      <section id="why-choose" className="sublivo-section">
+        <div className="sublivo-section-header">
+          <p className="sublivo-section-eyebrow">Why Choose Us</p>
+          <h2 className="sublivo-section-title">Direct Quality.<br /><span style={{ color: 'var(--primary)' }}>International Standards.</span></h2>
+          <p className="sublivo-section-desc">Direct factory manufacturing means better quality, lower prices, and faster delivery for your bulk orders.</p>
+        </div>
+
+        <div className="sublivo-features-grid">
+          {[
+            { icon: <Award size={22} />, title: 'Direct Manufacturing', desc: 'Direct manufacturing with 200+ skilled workers and modern machinery.' },
+            { icon: <Zap size={22} />, title: 'Sublimation Printing', desc: 'State-of-the-art sublimation machines for vivid, fade-resistant prints on any design.' },
+            { icon: <Shield size={22} />, title: 'Quality Control', desc: 'Strict quality checks at every production stage. International export-grade standards.' },
+            { icon: <Globe size={22} />, title: 'Global Shipping', desc: 'Reliable worldwide shipping to USA, UK, Canada, Europe and beyond with full tracking.' },
+            { icon: <Award size={22} />, title: 'Custom Branding', desc: 'Your logo, name, number, colors — we produce exactly what you need, no minimum hassle.' },
+            { icon: <Users size={22} />, title: 'Trusted by 500+', desc: 'Over 500 clubs, brands, and businesses worldwide trust SublivoExport for their sportswear.' },
+          ].map((f, i) => (
+            <div key={i} className="sublivo-feature-card glass">
+              <div className="feature-icon-box">{f.icon}</div>
+              <h4>{f.title}</h4>
+              <p>{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ===== PRODUCT CATEGORIES ===== */}
+      <section id="categories" className="sublivo-section sublivo-categories-section">
+        <div className="sublivo-section-header">
+          <p className="sublivo-section-eyebrow">Full Export Range</p>
+          <h2 className="sublivo-section-title">Everything You Need.<br /><span style={{ color: 'var(--primary)' }}>Jerseys, Apparel, Shoes & Accessories.</span></h2>
+          <p className="sublivo-section-desc">From custom sublimation jerseys to heavy-duty rugby gear, casual apparel, footwear, and sports accessories — we manufacture and export it all under one roof.</p>
+        </div>
+
+        <div className="sublivo-categories-grid">
+          {PRODUCT_CATEGORIES.map((cat, i) => (
+            <div 
+              key={i} 
+              className={`sublivo-cat-card glass ${activeCategory === i ? 'active' : ''}`}
+              onClick={() => setActiveCategory(activeCategory === i ? null : i)}
+            >
+              <span className="cat-emoji">{cat.icon}</span>
+              <h4>{cat.name}</h4>
+              <p>{cat.desc}</p>
+              <Link to={`/shop?category=${cat.id}`} className="cat-order-btn" onClick={e => e.stopPropagation()}>
+                Order Now <ArrowRight size={14} />
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ===== PRODUCTS FROM DB ===== */}
+      {displayProducts.length > 0 && (
+        <section id="product-details" className="sublivo-section sublivo-products-section">
+          <div className="sublivo-section-header">
+            <p className="sublivo-section-eyebrow">Handpicked Collection</p>
+            <h2 className="sublivo-section-title">Featured <span style={{ color: 'var(--primary)' }}>Products</span></h2>
+          </div>
+
+          <div 
+            ref={carouselRef}
+            className="sublivo-products-row"
+          >
+            {displayProducts.map((product) => (
+              <ProductCard
+                key={product.id || product._id}
+                product={product}
+                onAddToCart={handleAddToCart}
+              />
+            ))}
+          </div>
+
+          <div className="sublivo-products-footer" style={{ textAlign: 'center' }}>
+            <Link to="/shop" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-flex', padding: '10px 22px', fontSize: '13.5px' }}>
+              View All Products <ArrowRight size={15} />
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* ===== CUSTOM ORDER SECTION ===== */}
+      <section id="custom-order" className="sublivo-section">
+        <div className="sublivo-custom-order glass">
+          <div className="sublivo-custom-order-header" style={{ textAlign: 'center' }}>
+            <p className="sublivo-section-eyebrow">Custom Orders</p>
+            <h2 className="sublivo-section-title">Your Vision, Our <span style={{ color: 'var(--primary)' }}>Expertise</span></h2>
+            <p style={{ color: 'var(--text-muted)', maxWidth: '600px', margin: '0 auto' }}>
+              Send us your design, colors, logo and we'll bring it to life. Full customization available on all products.
+            </p>
+          </div>
+
+          <div className="custom-steps">
+            {[
+              { step: '01', title: 'Share Your Design', desc: 'Send us your logo, colors, player names & numbers via WhatsApp or email.' },
+              { step: '02', title: 'Get Free Quote', desc: 'We send you a detailed quote with price, timeline and sample options.' },
+              { step: '03', title: 'Approve Sample', desc: 'We produce a digital mockup or physical sample for your approval.' },
+              { step: '04', title: 'Production & Ship', desc: 'Full production begins. We pack & ship worldwide with tracking.' },
+            ].map((s, i) => (
+              <div key={i} className="custom-step glass">
+                <div className="step-number">{s.step}</div>
+                <h4>{s.title}</h4>
+                <p>{s.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="sublivo-custom-order-actions" style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button onClick={handleWhatsApp} className="btn-primary sublivo-custom-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.49"/></svg>
+              Start Your Order on WhatsApp
+            </button>
+            <button onClick={handleEmail} className="btn-outline sublivo-custom-btn">
+              <Mail size={16} /> Email Us
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== BULK ORDER SECTION ===== */}
+      <section id="bulk-orders" className="sublivo-section">
+        <div className="sublivo-bulk-layout">
+          <div className="sublivo-bulk-content">
+            <p className="sublivo-section-eyebrow">Bulk Orders</p>
+            <h2 className="sublivo-section-title" style={{ textAlign: 'left' }}>
+              Scale Your Business<br /><span style={{ color: 'var(--primary)' }}>With Bulk Pricing</span>
+            </h2>
+            <p style={{ color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '18px', fontSize: '13.5px' }}>
+              We offer special pricing for bulk orders. The more you order, the better the price. Perfect for sports clubs, academies, retail brands and distributors worldwide.
+            </p>
+            <div className="bulk-tiers">
+              {[
+                { qty: '50–200 pcs', discount: 'Standard Rate', color: 'var(--text-muted)' },
+                { qty: '200–500 pcs', discount: '5–10% Discount', color: 'var(--secondary)' },
+                { qty: '500–1000 pcs', discount: '10–20% Discount', color: 'var(--primary)' },
+                { qty: '1000+ pcs', discount: 'Best Price + Free Samples', color: '#ff6b6b' },
+              ].map((t, i) => (
+                <div key={i} className="bulk-tier glass" style={{ borderLeft: `3px solid ${t.color}` }}>
+                  <div style={{ fontWeight: '700', color: 'white' }}>{t.qty}</div>
+                  <div style={{ fontSize: '12px', color: t.color, fontWeight: '600' }}>{t.discount}</div>
                 </div>
+              ))}
+            </div>
+            <button onClick={handleWhatsApp} className="btn-primary" style={{ marginTop: '18px', padding: '10px 22px', fontSize: '13.5px' }}>
+              Get Bulk Quote <Package size={15} />
+            </button>
+          </div>
+
+          {/* Inquiry Form */}
+          <div id="inquiry-form" className="sublivo-inquiry-form glass">
+            <h3 style={{ marginBottom: '16px', fontSize: '17px', fontWeight: '700' }}>📋 Get a Free Price Quote</h3>
+            <InquiryForm />
+          </div>
+        </div>
+      </section>
+
+      {/* ===== QUALITY & SHIPPING ===== */}
+      <section id="quality" className="sublivo-section">
+        <div className="sublivo-section-header">
+          <p className="sublivo-section-eyebrow">Quality & Shipping</p>
+          <h2 className="sublivo-section-title">From Production<br /><span style={{ color: 'var(--primary)' }}>To Your Door</span></h2>
+        </div>
+
+        <div className="quality-steps">
+          {[
+            { icon: '🎨', title: 'Design Approval', desc: 'Digital mockup shared before production starts.' },
+            { icon: '✂️', title: 'Production', desc: 'Manufactured in our dedicated production facility with skilled workers.' },
+            { icon: '🔍', title: 'Quality Control', desc: 'Every piece inspected before packing. Zero compromise.' },
+            { icon: '📦', title: 'Professional Packing', desc: 'Individually packed, labeled, and export-ready.' },
+            { icon: '✈️', title: 'International Shipping', desc: 'DHL, FedEx, UPS & sea freight available worldwide.' },
+            { icon: '🤝', title: 'After-Sales Support', desc: 'We stay in touch until you are 100% satisfied.' },
+          ].map((s, i) => (
+            <div key={i} className="quality-step glass">
+              <span style={{ fontSize: '32px', marginBottom: '12px', display: 'block' }}>{s.icon}</span>
+              <h4>{s.title}</h4>
+              <p>{s.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ===== TESTIMONIALS ===== */}
+      <section id="reviews" className="sublivo-section">
+        <div className="sublivo-section-header">
+          <p className="sublivo-section-eyebrow">Client Reviews</p>
+          <h2 className="sublivo-section-title">What Our <span style={{ color: 'var(--primary)' }}>Clients Say</span></h2>
+        </div>
+
+        <div className="sublivo-testimonials">
+          {TESTIMONIALS.map((t, i) => (
+            <div 
+              key={i} 
+              className={`sublivo-testimonial glass ${activeTestimonial === i ? 'active-testimonial' : ''}`}
+              onClick={() => setActiveTestimonial(i)}
+            >
+              <div style={{ display: 'flex', gap: '4px', marginBottom: '12px' }}>
+                {[...Array(t.rating)].map((_, si) => <Star key={si} size={14} fill="var(--primary)" color="var(--primary)" />)}
               </div>
-            ))
-          ) : (
-            <p style={{ textAlign: 'center', color: 'var(--text-muted)', width: '100%' }}>No products available.</p>
-          )}
-        </div>
-
-        {maxProducts.length > 1 && (
-          <button 
-            onClick={scrollRight} 
-            className="hover-scale desktop-arrow-btn right-arrow" 
-            style={{ 
-              padding: '12px', color: 'white', background: 'transparent', border: 'none', cursor: 'pointer', flexShrink: 0
-            }}>
-            <ChevronRight size={48} />
-          </button>
-        )}
-      </div>
-
-      {/* Why Choose Section */}
-      <div id="why-choose" className="glass-panel why-choose-section">
-        <div className="why-choose-header">
-          <h3 className="why-choose-title">Why Choose MOR Hair & Beauty?</h3>
-          <div className="why-choose-badge">
-            <span className="natural-care-text">Natural Care<br />Real Results</span>
-            <Heart size={20} className="text-primary why-choose-heart" />
-          </div>
-        </div>
-
-        <div className="why-choose-features">
-          <div className="why-choose-feature">
-            <div className="glass why-choose-icon">
-              <Leaf size={24} className="text-primary" />
-            </div>
-            <div className="why-choose-text">
-              <h4>Deep Hydration</h4>
-              <p>Nourishes hair roots and skin</p>
-            </div>
-          </div>
-          <div className="why-choose-feature">
-            <div className="glass why-choose-icon">
-              <Droplet size={24} className="text-primary" />
-            </div>
-            <div className="why-choose-text">
-              <h4>Promotes Healthy Growth</h4>
-              <p>Activates follicles & restores elasticity</p>
-            </div>
-          </div>
-          <div className="why-choose-feature">
-            <div className="glass why-choose-icon">
-              <Star size={24} className="text-primary" />
-            </div>
-            <div className="why-choose-text">
-              <h4>Restores Natural Shine</h4>
-              <p>Revitalizes dull hair and tired skin</p>
-            </div>
-          </div>
-          <div className="why-choose-feature">
-            <div className="glass why-choose-icon">
-              <Shield size={24} className="text-primary" />
-            </div>
-            <div className="why-choose-text">
-              <h4>Smooths & Softens</h4>
-              <p>Leaves hair silky and skin flawless</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Banner Section */}
-      <div id="real-results" className="glass-panel banner-section">
-        <div className="banner-image-container">
-          <img src="/woman-hair.jpg" alt="Healthy Hair" className="banner-image" />
-        </div>
-
-        <div className="banner-content">
-          <div className="banner-text">
-            <span className="glass banner-badge">Healthy Hair & Skin • Happy You</span>
-            <h2 className="banner-title">Real Care<br />Real Results</h2>
-            <p className="banner-desc">Experience the natural difference with MOR Hair & Beauty Products.</p>
-          </div>
-
-          <div className="banner-features">
-            <div className="banner-feature">
-              <div className="glass banner-icon">
-                <Droplet size={28} className="text-primary" />
-              </div>
-              <span>Radiant Skin</span>
-            </div>
-            <div className="banner-feature">
-              <div className="glass banner-icon">
-                <Leaf size={28} className="text-primary" />
-              </div>
-              <span>Stronger Roots</span>
-            </div>
-            <div className="banner-feature">
-              <div className="glass banner-icon">
-                <Star size={28} className="text-primary" />
-              </div>
-              <span>Natural Shine</span>
-            </div>
-            <div className="banner-feature">
-              <div className="glass banner-icon">
-                <Shield size={28} className="text-primary" />
-              </div>
-              <span>Deep Hydration</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Reviews Section */}
-      <div id="reviews" className="glass-panel section-container">
-        <div className="section-header">
-          <div>
-            <h3 className="section-title">What Our Customers Say</h3>
-            <p className="section-subtitle">Real People. Real Experiences.</p>
-          </div>
-        </div>
-
-        <div className="reviews-wrapper" style={{ '--current-index': currentReviewIndex }}>
-          <div className="reviews-grid">
-            <div className={`review-card glass ${currentReviewIndex === 0 ? 'active-review' : 'hidden-review'}`}>
-              <div className="review-header">
-                <div className="review-avatar">
-                  <User size={24} color="var(--primary)" />
+              <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, marginBottom: '16px' }}>"{t.text}"</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>
+                  {t.flag}
                 </div>
-                <div className="review-user-info">
-                  <h4>Ayesha Khan</h4>
+                <div>
+                  <div style={{ fontWeight: '600', fontSize: '14px' }}>{t.name}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{t.country}</div>
                 </div>
+                <CheckCircle size={16} color="#4ade80" style={{ marginLeft: 'auto' }} />
               </div>
-              <p className="review-text">My hair fall was very high but after using this oil I can see a real difference. My hair feels stronger and more shiny now. Highly recommended!</p>
-              <span className="review-date">2 days ago</span>
             </div>
-
-            <div className={`review-card glass ${currentReviewIndex === 1 ? 'active-review' : 'hidden-review'}`}>
-              <div className="review-header">
-                <div className="review-avatar">
-                  <User size={24} color="var(--primary)" />
-                </div>
-                <div className="review-user-info">
-                  <h4>Sara Malik</h4>
-                </div>
-              </div>
-              <p className="review-text">Best hair oil I have ever used. Natural oils are really effective. My hair feels so soft and healthy. Love it!</p>
-              <span className="review-date">4 days ago</span>
-            </div>
-
-            <div className={`review-card glass ${currentReviewIndex === 2 ? 'active-review' : 'hidden-review'}`}>
-              <div className="review-header">
-                <div className="review-avatar">
-                  <User size={24} color="var(--primary)" />
-                </div>
-                <div className="review-user-info">
-                  <h4>Usman Raza</h4>
-                </div>
-              </div>
-              <p className="review-text">Amazing product! Fragrance is also very good. It really works on hair fall and gives a natural shine. I'm ordering again!</p>
-              <span className="review-date">6 days ago</span>
-            </div>
-          </div>
+          ))}
         </div>
-
-        <div className="mobile-review-controls">
-          <button onClick={prevReview} className="glass" disabled={currentReviewIndex === 0}><ChevronLeft size={24} /></button>
-          <button onClick={nextReview} className="glass" disabled={currentReviewIndex === 2}><ChevronRight size={24} /></button>
-        </div>
-      </div>
-
-      {/* FAQ Section */}
-      <div id="faq" className="glass-panel section-container">
-        <div className="section-header">
-          <div>
-            <h3 className="section-title">Frequently Asked Questions</h3>
-            <p className="section-subtitle">Find answers to common questions about MOR Hair & Beauty Products.</p>
-          </div>
-        </div>
-
-        <div className="faq-grid">
-          <div className="faq-item glass" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: '15px 20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-              <span style={{ fontWeight: 'bold', fontSize: '16px' }}>Is this product original?</span>
-              <Plus size={16} />
-            </div>
-            <p style={{ marginTop: '12px', color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.6, textAlign: 'left' }}>Yes, our product is 100% original and guaranteed. We ensure the highest quality standards for all our customers.</p>
-          </div>
-          
-          <div className="faq-item glass" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: '15px 20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-              <span style={{ fontWeight: 'bold', fontSize: '16px' }}>Is cash on delivery available?</span>
-              <Plus size={16} />
-            </div>
-            <p style={{ marginTop: '12px', color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.6, textAlign: 'left' }}>Yes, Cash on Delivery (COD) is available for all orders across the country for your convenience.</p>
-          </div>
-          
-          <div className="faq-item glass" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: '15px 20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-              <span style={{ fontWeight: 'bold', fontSize: '16px' }}>How long does the delivery take?</span>
-              <Plus size={16} />
-            </div>
-            <p style={{ marginTop: '12px', color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.6, textAlign: 'left' }}>Delivery typically takes 3 to 4 business days depending on your location.</p>
-          </div>
-          
-          <div className="faq-item glass" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: '15px 20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-              <span style={{ fontWeight: 'bold', fontSize: '16px' }}>What is the return policy?</span>
-              <Plus size={16} />
-            </div>
-            <p style={{ marginTop: '12px', color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.6, textAlign: 'left' }}>Since we offer Cash on Delivery, if you are not completely satisfied with the product upon arrival, you can immediately return it to our delivery rider.</p>
-          </div>
-        </div>
-      </div>
+      </section>
     </>
+  );
+};
+
+/* ===== INQUIRY FORM COMPONENT ===== */
+const InquiryForm = () => {
+  const [form, setForm] = useState({ name: '', country: '', product: '', quantity: '', design: '', email: '' });
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    // Send via WhatsApp
+    const msg = `Hello SublivoExport!\n\nNew Inquiry:\n👤 Name: ${form.name}\n🌍 Country: ${form.country}\n📧 Email: ${form.email}\n📦 Product: ${form.product}\n🔢 Quantity: ${form.quantity}\n🎨 Design Notes: ${form.design}`;
+    setTimeout(() => {
+      window.open(`https://wa.me/923204615100?text=${encodeURIComponent(msg)}`, '_blank');
+      setLoading(false);
+      setSubmitted(true);
+    }, 500);
+  };
+
+  if (submitted) {
+    return (
+      <div style={{ textAlign: 'center', padding: '30px' }}>
+        <CheckCircle size={48} color="#4ade80" style={{ marginBottom: '16px' }} />
+        <h4 style={{ color: '#4ade80', marginBottom: '8px' }}>Inquiry Sent!</h4>
+        <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>We'll reply within 2 hours. Thank you!</p>
+        <button onClick={() => setSubmitted(false)} className="btn-outline" style={{ marginTop: '16px', fontSize: '13px', padding: '8px 20px' }}>Send Another</button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <input type="text" name="name" placeholder="Your Full Name *" value={form.name} onChange={handleChange} required className="inquiry-input" />
+      <input type="text" name="country" placeholder="Your Country *" value={form.country} onChange={handleChange} required className="inquiry-input" />
+      <input type="email" name="email" placeholder="Your Email Address" value={form.email} onChange={handleChange} className="inquiry-input" />
+      <select name="product" value={form.product} onChange={handleChange} required className="inquiry-input">
+        <option value="">Select Product Type *</option>
+        <option value="Football Jerseys">⚽ Football Jerseys (Sublimation & Embroidered)</option>
+        <option value="Rugby Shirts">🏉 Rugby Shirts (Heavy-Duty Performance)</option>
+        <option value="T-Shirts">👕 T-Shirts (Custom Print & Wholesale)</option>
+        <option value="Polo Shirts">🎽 Polo Shirts (Corporate & Sports)</option>
+        <option value="Hoodies & Jackets">🧥 Hoodies & Jackets (Fleece & Pullover)</option>
+        <option value="Shorts & Bottoms">🩳 Shorts & Bottoms (Mesh & Dry-Fit)</option>
+        <option value="Sports Shoes">👟 Sports Shoes (Turf, Indoor & Outdoor)</option>
+        <option value="Accessories">🧤 Accessories (Gloves, Socks, Caps & Bags)</option>
+        <option value="Other">Other / Full Custom Kit</option>
+      </select>
+      <input type="text" name="quantity" placeholder="Quantity (e.g. 500 pcs) *" value={form.quantity} onChange={handleChange} required className="inquiry-input" />
+      <textarea name="design" placeholder="Design details (colors, logo, name/number, etc.)" value={form.design} onChange={handleChange} rows={3} className="inquiry-input" style={{ resize: 'vertical' }} />
+      <button type="submit" className="btn-primary" style={{ padding: '11px', justifyContent: 'center', fontSize: '13.5px' }} disabled={loading}>
+        {loading ? 'Sending...' : ' Send Inquiry via WhatsApp'}
+      </button>
+    </form>
   );
 };
 

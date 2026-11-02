@@ -43,7 +43,7 @@ const SubAdminLogin = ({ setSubAdminToken, setSubAdminPermissions }) => {
           </div>
           <div style={{ textAlign:"center" }}>
             <h1 style={{ margin:0, fontSize:"26px", fontWeight:"800" }}>Admin Login</h1>
-            <p style={{ margin:"6px 0 0", color:"var(--text-muted)", fontSize:"14px" }}>MOR Natural Care — Admin Portal</p>
+            <p style={{ margin:"6px 0 0", color:"var(--text-muted)", fontSize:"14px" }}>SublivoExport — Admin Portal</p>
           </div>
         </div>
 
@@ -55,10 +55,10 @@ const SubAdminLogin = ({ setSubAdminToken, setSubAdminPermissions }) => {
 
         <form onSubmit={handleLogin} style={{ display:"flex", flexDirection:"column", gap:"16px" }}>
           <div>
-            <label style={{ display:"block", marginBottom:"8px", fontSize:"13px", color:"var(--text-muted)", fontWeight:"600", letterSpacing:"0.5px", textTransform:"uppercase" }}>Email</label>
+            <label style={{ display:"block", marginBottom:"8px", fontSize:"13px", color:"var(--text-muted)", fontWeight:"600", letterSpacing:"0.5px", textTransform:"uppercase" }}>Email or Username</label>
             <input
               type="text" required value={email} onChange={e=>setEmail(e.target.value)}
-              placeholder="admin@morcare.pk or username"
+              placeholder="Enter your admin email or username"
               style={{ width:"100%", padding:"13px 16px", borderRadius:"10px", border:"1px solid rgba(255,255,255,0.15)", background:"rgba(255,255,255,0.05)", color:"white", outline:"none", fontSize:"15px", boxSizing:"border-box" }}
             />
           </div>

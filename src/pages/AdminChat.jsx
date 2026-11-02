@@ -357,7 +357,7 @@ const AdminChat = ({ adminToken, isSubAdmin, permissions = [] }) => {
                           {msg.product.image && <img src={msg.product.image} alt="product" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />}
                           <div style={{ flex: 1 }}>
                             <div style={{ fontSize: '12px', fontWeight: 'bold', lineHeight: 1.2 }}>{msg.product.title}</div>
-                            <div style={{ fontSize: '11px', opacity: 0.8 }}>Rs. {msg.product.price}</div>
+                            <div style={{ fontSize: '11px', opacity: 0.8 }}>${msg.product.price}</div>
                           </div>
                         </div>
                       )}

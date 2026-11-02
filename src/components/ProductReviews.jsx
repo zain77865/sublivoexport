@@ -9,7 +9,8 @@ const ProductReviews = ({ productId }) => {
   
   // New review state
   const [name, setName] = useState('');
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
   const [text, setText] = useState('');
   const [image, setImage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,11 +47,15 @@ const ProductReviews = ({ productId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !text || !rating) return;
+    if (!name || !text) return;
+    if (!rating || rating === 0) {
+      alert('Please select a star rating by clicking on the stars.');
+      return;
+    }
     
     setIsSubmitting(true);
     try {
-      const res = await fetch(`${API_URL}/reviews`, {
+      const res = await fetch(`${API_URL}/reviews/${productId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productId, name, rating, text, image })
@@ -60,7 +65,8 @@ const ProductReviews = ({ productId }) => {
         const newReview = await res.json();
         setReviews([newReview, ...reviews]);
         setName('');
-        setRating(5);
+        setRating(0);
+        setHoverRating(0);
         setText('');
         setImage('');
       }
@@ -87,33 +93,43 @@ const ProductReviews = ({ productId }) => {
       <h3 className="section-title" style={{ marginBottom: '30px', fontSize: '24px' }}>Customer Reviews</h3>
       
       {/* Add Review Form */}
-      <div className="glass review-form-container" style={{ padding: '25px', borderRadius: '16px', marginBottom: '40px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
-        <h4 style={{ margin: '0 0 20px', color: 'white', fontSize: '18px' }}>Write a Review</h4>
+      <div className="glass review-form-container">
+        <h4 className="review-form-title" style={{ margin: '0 0 20px', color: 'white', fontSize: '18px' }}>Write a Review</h4>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
           
-          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+          <div className="review-inputs-row" style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
             <input 
               type="text" 
               placeholder="Your Name" 
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="glass"
+              className="glass review-name-input"
               style={{ flex: 1, minWidth: '200px', padding: '12px 15px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', color: 'white', background: 'rgba(255,255,255,0.05)' }}
             />
             
-            <div className="glass" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 15px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Rating:</span>
-              <div style={{ display: 'flex', gap: '5px', cursor: 'pointer' }}>
-                {[1,2,3,4,5].map(num => (
-                  <Star 
-                    key={num} 
-                    size={20} 
-                    onClick={() => setRating(num)}
-                    fill={num <= rating ? "#ffc107" : "transparent"} 
-                    color={num <= rating ? "#ffc107" : "rgba(255,255,255,0.3)"} 
-                  />
-                ))}
+            <div className="glass review-rating-box" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 15px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)' }}>
+              <span className="review-rating-label" style={{ color: 'var(--text-muted)' }}>Rating:</span>
+              <div 
+                className="review-star-selector"
+                style={{ display: 'flex', gap: '5px', cursor: 'pointer' }}
+                onMouseLeave={() => setHoverRating(0)}
+              >
+                {[1, 2, 3, 4, 5].map(num => {
+                  const activeRating = hoverRating || rating;
+                  const isFilled = num <= activeRating;
+                  return (
+                    <Star 
+                      key={num} 
+                      size={22} 
+                      onClick={() => setRating(num)}
+                      onMouseEnter={() => setHoverRating(num)}
+                      fill={isFilled ? "#ffc107" : "transparent"} 
+                      color={isFilled ? "#ffc107" : "rgba(255,255,255,0.3)"} 
+                      style={{ transition: 'transform 0.15s ease, fill 0.15s ease', transform: isFilled ? 'scale(1.15)' : 'scale(1)' }}
+                    />
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -123,19 +139,19 @@ const ProductReviews = ({ productId }) => {
             value={text}
             onChange={(e) => setText(e.target.value)}
             required
-            className="glass"
+            className="glass review-textarea"
             rows={4}
             style={{ padding: '12px 15px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', color: 'white', background: 'rgba(255,255,255,0.05)', resize: 'vertical' }}
           />
 
           <div className="review-form-actions" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '10px 15px', background: 'rgba(255,255,255,0.1)', borderRadius: '8px', color: 'white', transition: 'background 0.2s' }}>
+            <label className="review-attach-btn" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '10px 15px', background: 'rgba(255,255,255,0.1)', borderRadius: '8px', color: 'white', transition: 'background 0.2s' }}>
               <Upload size={18} />
               <span>Attach Image</span>
               <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
             </label>
             {image && (
-              <div style={{ position: 'relative', width: '40px', height: '40px' }}>
+              <div className="review-image-preview-box" style={{ position: 'relative', width: '40px', height: '40px' }}>
                 <img src={image} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '6px' }} />
                 <button type="button" onClick={() => setImage('')} style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'var(--primary)', color: 'black', border: 'none', borderRadius: '50%', width: '16px', height: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
                   <X size={12} />
@@ -162,12 +178,12 @@ const ProductReviews = ({ productId }) => {
               <div key={review._id} className="glass review-item" style={{ padding: '20px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.02)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
                   <div>
-                    <h5 style={{ margin: '0 0 5px', color: 'white', fontSize: '16px' }}>{review.name}</h5>
-                    <div style={{ display: 'flex', gap: '2px' }}>
+                    <h5 className="review-item-author" style={{ margin: '0 0 5px', color: 'white', fontSize: '16px' }}>{review.name}</h5>
+                    <div className="review-item-stars" style={{ display: 'flex', gap: '2px' }}>
                       {renderStars(review.rating)}
                     </div>
                   </div>
-                  <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
+                  <span className="review-item-date" style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
                     {new Date(review.createdAt).toLocaleDateString()}
                   </span>
                 </div>
@@ -176,12 +192,13 @@ const ProductReviews = ({ productId }) => {
                   {review.image && (
                     <img 
                       src={review.image} 
-                      alt="Review" 
+                      alt={`${review.name} verified review`} 
                       onClick={() => setSelectedImage(review.image)}
+                      className="review-item-img"
                       style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0, cursor: 'pointer' }} 
                     />
                   )}
-                  <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: '1.6', margin: 0 }}>
+                  <p className="review-item-text" style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: '1.6', margin: 0 }}>
                     {review.text}
                   </p>
                 </div>
@@ -215,7 +232,7 @@ const ProductReviews = ({ productId }) => {
             </button>
             <img 
               src={selectedImage} 
-              alt="Fullscreen Review" 
+              alt="SublivoExport verified customer review" 
               style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: '8px' }} 
               onClick={(e) => e.stopPropagation()}
             />

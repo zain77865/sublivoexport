@@ -1,4 +1,8 @@
 const path = require('path');
+const dns = require('dns');
+// Set public DNS for MongoDB Atlas SRV resolution (fixes Windows/ISP querySrv ECONNREFUSED)
+try { dns.setServers(['8.8.8.8', '8.8.4.4']); } catch (e) {}
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -10,7 +14,7 @@ const rateLimit = require('express-rate-limit');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const app = express();
-const JWT_SECRET = process.env.JWT_SECRET || 'mor_super_secret_key_2026'; // Please ensure this is set in .env in production
+const JWT_SECRET = process.env.JWT_SECRET || 'sublivoexport_super_secret_key_2026'; // Please ensure this is set in .env in production
 
 // Vercel proxy support (required for rate-limiting to work properly)
 app.set('trust proxy', 1);
@@ -116,9 +120,13 @@ const productSchema = new mongoose.Schema({
   title: { type: String, required: true },
   price: { type: Number, required: true },
   actualPrice: { type: Number, required: true, default: 1500 },
+  category: { type: String, default: 'Football Jerseys' },
+  sizes: { type: [String], default: ['Small', 'Medium', 'Large', 'XL'] },
+  sizePrices: { type: mongoose.Schema.Types.Mixed, default: {} },
+  isFeatured: { type: Boolean, default: false },
   images: { type: [String], required: true },
   video: { type: String, default: '' },
-  description: { type: String, default: 'Experience the ultimate care for your hair with MOR Multi Recover Hair Oil. Formulated with a blend of premium natural oils, this lightweight, non-greasy formula penetrates deep into the roots to strengthen, nourish, and restore your hair\'s natural shine. Perfect for reducing hair fall, repairing split ends, and promoting healthy growth.' },
+  description: { type: String, default: 'Premium quality sportswear manufactured and exported by SublivoExport from our own factory in Pakistan. Custom sublimation printing, embroidery, and full customization available. We export to USA, UK, Canada, Europe and worldwide.' },
   image: { type: String } // For backwards compatibility
 }, { timestamps: true });
 
@@ -149,6 +157,7 @@ const orderSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true },
     phone: { type: String, required: true },
+    country: { type: String, default: '' },
     city: { type: String, default: '' },
     address: { type: String, required: true }
   },
@@ -156,11 +165,13 @@ const orderSchema = new mongoose.Schema({
     id: { type: String },
     title: { type: String, required: true },
     price: { type: Number, required: true },
-    image: { type: String }
+    image: { type: String },
+    size: { type: String, default: '' }
   },
+  items: { type: [mongoose.Schema.Types.Mixed], default: [] },
   quantity: { type: Number, default: 1 },
   totalAmount: { type: Number, required: true },
-  deliveryMethod: { type: String, default: 'Cash on Delivery' },
+  deliveryMethod: { type: String, default: 'Standard Delivery' },
   status: { type: String, default: 'Pending', enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'] }
 }, { timestamps: true });
 
@@ -217,22 +228,22 @@ const notifySubscribers = async (product) => {
     const emails = subscribers.map(s => s.email);
     const imageUrl = product.images && product.images.length > 0 ? product.images[0] : '';
     await transporter.sendMail({
-      from: `"MOR Natural Care" <${process.env.EMAIL_USER}>`,
+      from: `"SublivoExport" <${process.env.EMAIL_USER}>`,
       bcc: emails,
-      subject: `🌿 New Product Added: ${product.title}`,
+      subject: `🏆 New Product Added: ${product.title}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;background:#0a0f1a;color:#fff;border-radius:12px;overflow:hidden">
           <div style="background:linear-gradient(135deg,#4ade80,#22c55e);padding:24px;text-align:center">
-            <h1 style="margin:0;font-size:24px;color:#000">New Product from MOR!</h1>
+            <h1 style="margin:0;font-size:24px;color:#000">New Product from SublivoExport!</h1>
           </div>
           ${imageUrl ? `<div style="text-align:center;padding:20px"><img src="${imageUrl}" style="max-width:280px;border-radius:10px" alt="${product.title}"/></div>` : ''}
           <div style="padding:24px">
             <h2 style="color:#4ade80">${product.title}</h2>
             <p style="color:#a0a0a0">${product.description || ''}</p>
-            <p style="font-size:22px;font-weight:bold;color:#fff">Rs. ${product.price}</p>
-            <a href="https://morcare.pk/shop" style="display:inline-block;padding:12px 28px;background:#4ade80;color:#000;border-radius:8px;text-decoration:none;font-weight:bold;margin-top:16px">Shop Now</a>
+            <p style="font-size:22px;font-weight:bold;color:#fff">$${product.price}</p>
+            <a href="https://sublivoexport.com/shop" style="display:inline-block;padding:12px 28px;background:#f5a623;color:#000;border-radius:8px;text-decoration:none;font-weight:bold;margin-top:16px">Shop Now</a>
           </div>
-          <div style="padding:16px;text-align:center;color:#555;font-size:12px">You received this because you subscribed to MOR updates.</div>
+          <div style="padding:16px;text-align:center;color:#555;font-size:12px">You received this because you subscribed to SublivoExport updates.</div>
         </div>
       `
     });
@@ -622,6 +633,10 @@ app.get('/api/products', async (req, res) => {
       title: p.title,
       price: p.price,
       actualPrice: p.actualPrice,
+      category: p.category || 'Football Jerseys',
+      sizes: p.sizes && p.sizes.length > 0 ? p.sizes : ['Small', 'Medium', 'Large', 'XL'],
+      sizePrices: p.sizePrices || {},
+      isFeatured: Boolean(p.isFeatured),
       images: p.images && p.images.length > 0 ? p.images : (p.image ? [p.image] : []),
       video: p.video || '',
       description: p.description
@@ -642,14 +657,30 @@ app.get('/api/products', async (req, res) => {
 // Add a new product (Protected)
 app.post('/api/products', verifyAnyAdmin('products'), async (req, res) => {
   try {
-    const { title, price, actualPrice, images, video, description } = req.body;
-    const newProduct = new Product({ title, price, actualPrice, images, video, description, image: images && images.length > 0 ? images[0] : '' });
+    const { title, price, actualPrice, category, sizes, sizePrices, isFeatured, images, video, description } = req.body;
+    const newProduct = new Product({ 
+      title, 
+      price, 
+      actualPrice, 
+      category: category || 'Football Jerseys',
+      sizes: sizes && sizes.length > 0 ? sizes : ['Small', 'Medium', 'Large', 'XL'],
+      sizePrices: sizePrices || {},
+      isFeatured: Boolean(isFeatured),
+      images, 
+      video: video || '', 
+      description, 
+      image: images && images.length > 0 ? images[0] : '' 
+    });
     const savedProduct = await newProduct.save();
     const productData = {
       id: savedProduct._id.toString(),
       title: savedProduct.title,
       price: savedProduct.price,
       actualPrice: savedProduct.actualPrice,
+      category: savedProduct.category || 'Football Jerseys',
+      sizes: savedProduct.sizes,
+      sizePrices: savedProduct.sizePrices || {},
+      isFeatured: Boolean(savedProduct.isFeatured),
       images: savedProduct.images,
       video: savedProduct.video,
       description: savedProduct.description
@@ -679,10 +710,25 @@ app.post('/api/newsletter/subscribe', async (req, res) => {
 // Update a product (Protected)
 app.put('/api/products/:id', verifyAnyAdmin('products'), async (req, res) => {
   try {
-    const { title, price, actualPrice, images, video, description } = req.body;
+    const { title, price, actualPrice, category, sizes, sizePrices, isFeatured, images, video, description } = req.body;
+    const updateData = { 
+      title, 
+      price, 
+      actualPrice, 
+      category: category || 'Football Jerseys',
+      sizes: sizes && sizes.length > 0 ? sizes : ['Small', 'Medium', 'Large', 'XL'],
+      sizePrices: sizePrices || {},
+      images, 
+      video: video || '', 
+      description, 
+      image: images && images.length > 0 ? images[0] : '' 
+    };
+    if (isFeatured !== undefined) {
+      updateData.isFeatured = Boolean(isFeatured);
+    }
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
-      { title, price, actualPrice, images, video, description, image: images && images.length > 0 ? images[0] : '' },
+      updateData,
       { new: true }
     );
     if (!updatedProduct) return res.status(404).json({ message: 'Product not found' });
@@ -692,6 +738,10 @@ app.put('/api/products/:id', verifyAnyAdmin('products'), async (req, res) => {
       title: updatedProduct.title,
       price: updatedProduct.price,
       actualPrice: updatedProduct.actualPrice,
+      category: updatedProduct.category || 'Football Jerseys',
+      sizes: updatedProduct.sizes,
+      sizePrices: updatedProduct.sizePrices || {},
+      isFeatured: Boolean(updatedProduct.isFeatured),
       images: updatedProduct.images,
       video: updatedProduct.video,
       description: updatedProduct.description
@@ -851,12 +901,12 @@ app.post('/api/products/seed', async (req, res) => {
 // Place a new order
 app.post('/api/orders', async (req, res) => {
   try {
-    const { customer, product, quantity, totalAmount } = req.body;
+    const { customer, product, items, quantity, totalAmount } = req.body;
     if (!customer || !product) return res.status(400).json({ message: 'Missing required fields' });
 
     const orderId = 'MOR-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2, 4).toUpperCase();
 
-    const newOrder = new Order({ orderId, customer, product, quantity, totalAmount });
+    const newOrder = new Order({ orderId, customer, product, items: items || [], quantity, totalAmount });
     await newOrder.save();
     res.status(201).json(newOrder);
   } catch (error) {

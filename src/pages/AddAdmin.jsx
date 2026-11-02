@@ -1,17 +1,15 @@
 import { API_URL } from '../config';
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserPlus, Package, ShoppingBag, MessageCircle, HelpCircle, LogOut, Trash2, Copy, Check, Menu, X } from "lucide-react";
+import { UserPlus, Package, ShoppingBag, LogOut, Trash2, Copy, Check, Menu, X } from "lucide-react";
 import AdminSidebar from '../components/AdminSidebar';
 
 const PERMISSIONS = [
   { key: "products", label: "Products",  icon: Package,        desc: "Add, edit & delete products" },
   { key: "orders",   label: "Orders",    icon: ShoppingBag,    desc: "View & manage orders" },
-  { key: "chat",     label: "Chat",      icon: MessageCircle,  desc: "Access customer chats" },
-  { key: "helpline", label: "Help Chat", icon: HelpCircle,     desc: "Access helpline chats" },
 ];
 
-const generateEmail    = () => `mor.admin.${Math.random().toString(36).substr(2,7)}@morcare.pk`;
+const generateEmail    = () => `sublivo.admin.${Math.random().toString(36).substr(2,7)}@sublivoexport.com`;
 const generatePassword = () => {
   const c = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#";
   return Array.from({length:12}, () => c[Math.floor(Math.random()*c.length)]).join("");
