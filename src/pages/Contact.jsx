@@ -46,7 +46,7 @@ const Contact = () => {
   };
 
   const handleDirectEmail = () => {
-    window.location.href = 'mailto:sublivoexport@gmail.com?subject=Sportswear Export Inquiry';
+    window.location.href = 'mailto:sublivoxexport@gmail.com?subject=Sportswear Export Inquiry';
   };
 
   return (
@@ -99,7 +99,7 @@ const Contact = () => {
             </div>
             <div>
               <h3 className="contact-card-title">Email Inquiries</h3>
-              <p className="contact-card-text">sublivoexport@gmail.com</p>
+              <p className="contact-card-text">sublivoxexport@gmail.com</p>
             </div>
             <div className="contact-card-action email-action">
               Send Email <ArrowRight size={13} />
@@ -282,6 +282,41 @@ const Contact = () => {
 
           {/* Why Contact Us / Export FAQ */}
           <div className="contact-info-col">
+            {/* Company Facility Card */}
+            <div className="glass" style={{
+              borderRadius: '16px',
+              overflow: 'hidden',
+              border: '1px solid rgba(49, 205, 106, 0.25)',
+              marginBottom: '16px',
+              position: 'relative',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.35)'
+            }}>
+              <img 
+                src="/company-photo.jpeg" 
+                onError={(e) => { e.currentTarget.src = "/company photo.jpeg"; }}
+                alt="SublivoExport Sialkot Manufacturing Facility" 
+                style={{ width: '100%', height: '175px', objectFit: 'cover', display: 'block' }}
+              />
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: 'linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.4), transparent)',
+                padding: '14px 16px'
+              }}>
+                <span style={{ fontSize: '10.5px', fontWeight: '800', color: 'var(--primary)', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+                  🏭 Factory & Export Office
+                </span>
+                <h4 style={{ margin: '2px 0 0', fontSize: '14px', fontWeight: '700', color: 'white' }}>
+                  SublivoExport Production Center
+                </h4>
+                <p style={{ margin: '2px 0 0', fontSize: '11.5px', color: 'rgba(255,255,255,0.7)' }}>
+                  Sialkot, Punjab, Pakistan
+                </p>
+              </div>
+            </div>
+
             <div className="glass contact-why-card">
               <h3 className="contact-why-header">
                 <ShieldCheck size={18} color="var(--primary)" /> Why Order From SublivoExport?

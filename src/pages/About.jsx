@@ -17,6 +17,75 @@ const About = () => {
           </p>
         </div>
 
+        {/* Company Photo Feature Banner */}
+        <div style={{
+          margin: '24px 0 32px 0',
+          borderRadius: '20px',
+          overflow: 'hidden',
+          border: '1px solid rgba(49, 205, 106, 0.3)',
+          boxShadow: '0 16px 40px rgba(0,0,0,0.5)',
+          position: 'relative'
+        }}>
+          <img 
+            src="/company-photo.jpeg" 
+            onError={(e) => { e.currentTarget.src = "/company photo.jpeg"; }}
+            alt="SublivoExport Manufacturing Facility & Headquarters" 
+            style={{
+              width: '100%',
+              maxHeight: '440px',
+              objectFit: 'cover',
+              display: 'block'
+            }}
+          />
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.4) 70%, transparent 100%)',
+            padding: '24px 24px 16px 24px',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            gap: '12px'
+          }}>
+            <div>
+              <span style={{ 
+                background: 'var(--primary)', 
+                color: '#000', 
+                fontSize: '11px', 
+                fontWeight: '800', 
+                padding: '3px 10px', 
+                borderRadius: '6px', 
+                textTransform: 'uppercase',
+                display: 'inline-block',
+                marginBottom: '6px'
+              }}>
+                Manufacturing Facility
+              </span>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '700', color: '#fff' }}>
+                SublivoExport Headquarters & Production Unit
+              </h3>
+              <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'rgba(255,255,255,0.75)' }}>
+                Sialkot, Punjab, Pakistan — Serving clients across 15+ countries worldwide
+              </p>
+            </div>
+            <div style={{
+              background: 'rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              padding: '6px 14px',
+              borderRadius: '10px',
+              fontSize: '12px',
+              color: '#fff',
+              fontWeight: '600'
+            }}>
+              ⭐ 100% In-House Production
+            </div>
+          </div>
+        </div>
+
         {/* Stats Row */}
         <div className="about-stats-grid">
           {[
@@ -70,6 +139,54 @@ const About = () => {
           ))}
         </div>
 
+        {/* Live Factory Video Section */}
+        <div style={{ margin: '40px 0 10px 0' }}>
+          <h2 className="about-section-title" style={{ textAlign: 'left', marginBottom: '8px' }}>
+            Live Factory <span style={{ color: 'var(--primary)' }}>Footage</span>
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', marginBottom: '20px', lineHeight: 1.6 }}>
+            Experience our manufacturing craftsmanship firsthand. We operate our own dedicated stitching, sublimation, and quality control lines in Sialkot.
+          </p>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '20px'
+          }}>
+            <div className="glass" style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <video 
+                src="/Production.mp4" 
+                autoPlay 
+                muted 
+                loop 
+                playsInline 
+                controls 
+                style={{ width: '100%', height: '220px', objectFit: 'cover', display: 'block' }}
+              />
+              <div style={{ padding: '14px 16px' }}>
+                <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '700', color: 'white' }}>Stitching & Production Floor</h4>
+                <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>Precision industrial sewing lines assembling custom uniforms.</p>
+              </div>
+            </div>
+
+            <div className="glass" style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <video 
+                src="/Video2.mp4" 
+                autoPlay 
+                muted 
+                loop 
+                playsInline 
+                controls 
+                style={{ width: '100%', height: '220px', objectFit: 'cover', display: 'block' }}
+              />
+              <div style={{ padding: '14px 16px' }}>
+                <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '700', color: 'white' }}>Finishing & Quality Inspection</h4>
+                <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>Meticulous finishing, steam pressing, and export packaging.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* CTA */}
         <div className="about-cta-box">
           <h3 className="about-cta-title">Ready to Work With Us?</h3>
@@ -82,7 +199,7 @@ const About = () => {
             >
               💬 WhatsApp Us
             </a>
-            <a href="mailto:sublivoexport@gmail.com" className="btn-outline about-cta-btn">
+            <a href="mailto:sublivoxexport@gmail.com" className="btn-outline about-cta-btn">
               ✉️ Send Email
             </a>
           </div>

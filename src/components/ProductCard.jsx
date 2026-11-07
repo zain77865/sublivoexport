@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, ChevronLeft, ChevronRight, MessageCircle, ArrowRight, PlayCircle } from 'lucide-react';
+import { ShoppingCart, ChevronLeft, ChevronRight, MessageCircle, ArrowRight, PlayCircle, Package } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ProductCard = ({ product, onMoreDetailClick, isDetailView, noBackground, onAddToCart, showQuantitySelector = false }) => {
@@ -8,11 +8,15 @@ const ProductCard = ({ product, onMoreDetailClick, isDetailView, noBackground, o
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
 
-  const allPossibleSizes = ['Small', 'Medium', 'Large', 'XL'];
-  const availableSizes = (product.sizes && product.sizes.length > 0)
+  // Size selection (includes Custom Size)
+  const baseSizes = ['Small', 'Medium', 'Large', 'XL', '2XL'];
+  const configuredSizes = (product.sizes && product.sizes.length > 0)
     ? product.sizes
-    : allPossibleSizes;
-  const [selectedSize, setSelectedSize] = useState(availableSizes[0] || 'Medium');
+    : baseSizes;
+  const allPossibleSizes = [...configuredSizes, 'Custom Size'];
+  const availableSizes = allPossibleSizes;
+  const [selectedSize, setSelectedSize] = useState(configuredSizes[0] || 'Medium');
+  const [customSizeInput, setCustomSizeInput] = useState('');
 
   const images = (product.images && product.images.length > 0)
     ? product.images
@@ -34,10 +38,28 @@ const ProductCard = ({ product, onMoreDetailClick, isDetailView, noBackground, o
     ? Math.round(((currentActualPrice - currentPrice) / currentActualPrice) * 100)
     : 0;
 
+  const getResolvedSize = () => {
+    if (selectedSize === 'Custom Size') {
+      return customSizeInput ? `Custom (${customSizeInput})` : 'Custom Size';
+    }
+    return selectedSize;
+  };
+
+  const handleBulkOrder = (e) => {
+    if (e) e.stopPropagation();
+    navigate('/bulk-quote', {
+      state: {
+        prefillProduct: product.title,
+        prefillSize: getResolvedSize(),
+        prefillQty: quantity
+      }
+    });
+  };
+
   const handleWhatsAppChat = (e) => {
     if (e) e.stopPropagation();
     const productUrl = `${window.location.origin}/product/${product._id || product.id}`;
-    const msg = `Hi SublivoExport, I want to inquire about this product:\n*${product.title}*\nPrice: $${currentPrice}\nLink: ${productUrl}\nCan you provide more information?`;
+    const msg = `Hi SublivoExport, I want to inquire about this product:\n*${product.title}*\nPrice: $${currentPrice}\nSize: ${getResolvedSize()}\nLink: ${productUrl}\nCan you provide more information?`;
     window.open(`https://wa.me/923204615100?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
@@ -50,7 +72,7 @@ const ProductCard = ({ product, onMoreDetailClick, isDetailView, noBackground, o
         price: currentPrice,
         actualPrice: currentActualPrice,
         image: images[0],
-        size: isDetailView ? selectedSize : undefined,
+        size: isDetailView ? getResolvedSize() : undefined,
         quantity: isDetailView ? quantity : 1,
       });
     }
@@ -198,7 +220,7 @@ const ProductCard = ({ product, onMoreDetailClick, isDetailView, noBackground, o
                 Available Sizes
               </span>
               <span className="sizes-selected-label" style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                Selected: <strong style={{ color: 'white' }}>{selectedSize}</strong>
+                Selected: <strong style={{ color: 'white' }}>{getResolvedSize()}</strong>
               </span>
             </div>
             <div className="sizes-pills-row" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
@@ -257,6 +279,19 @@ const ProductCard = ({ product, onMoreDetailClick, isDetailView, noBackground, o
                 );
               })}
             </div>
+
+            {selectedSize === 'Custom Size' && (
+              <div style={{ marginTop: '10px' }}>
+                <input
+                  type="text"
+                  placeholder="Enter custom measurements (e.g. Chest 42in, Length 30in, Sleeve 26in)..."
+                  value={customSizeInput}
+                  onChange={e => setCustomSizeInput(e.target.value)}
+                  className="inquiry-input"
+                  style={{ padding: '7px 12px', fontSize: '12px', width: '100%', boxSizing: 'border-box' }}
+                />
+              </div>
+            )}
           </div>
         )}
 
@@ -264,12 +299,22 @@ const ProductCard = ({ product, onMoreDetailClick, isDetailView, noBackground, o
         <div className="product-actions" style={{ display: 'contents' }}>
           <div className="product-actions-buttons" style={{ display: 'flex', gap: '15px', width: '100%', marginTop: '10px' }}>
             <button className="btn-primary" style={{ flex: 1, justifyContent: 'center', background: '#31cd6aff', color: 'white', borderColor: '#22c55e' }}
-              onClick={() => navigate(`/checkout/${product._id || product.id}`, { state: { quantity, size: selectedSize, price: currentPrice, actualPrice: currentActualPrice } })}>
+              onClick={() => navigate(`/checkout/${product._id || product.id}`, { state: { quantity, size: getResolvedSize(), price: currentPrice, actualPrice: currentActualPrice } })}>
               Buy Sample
             </button>
-            <button onClick={handleAddToCart} className="btn-outline" style={{ flex: 1, justifyContent: 'center', background: 'transparent' }}>
-              <ShoppingCart size={18} /> Add to Cart
-            </button>
+            {isDetailView ? (
+              <button 
+                onClick={handleBulkOrder} 
+                className="btn-outline" 
+                style={{ flex: 1, justifyContent: 'center', background: 'transparent', borderColor: '#f5a623', color: '#f5a623', fontWeight: '700' }}
+              >
+                <Package size={18} /> Bulk Order
+              </button>
+            ) : (
+              <button onClick={handleAddToCart} className="btn-outline" style={{ flex: 1, justifyContent: 'center', background: 'transparent' }}>
+                <ShoppingCart size={18} /> Add to Cart
+              </button>
+            )}
           </div>
           {!isDetailView && (
             <div onClick={() => navigate(`/product/${product._id || product.id}`)} className="more-detail-btn hover-text-primary" style={{ cursor: 'pointer' }}>

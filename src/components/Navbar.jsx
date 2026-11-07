@@ -40,9 +40,7 @@ const Navbar = ({ setIsCartOpen, totalCartItems }) => {
       <ul className="nav-links">
         <li><Link to="/" className={location.pathname === '/' ? 'text-primary active' : ''}>Home</Link></li>
         <li><Link to="/shop" className={location.pathname === '/shop' ? 'text-primary active' : ''}>Products</Link></li>
-        <li>
-          <a href="#bulk-orders" onClick={(e) => { e.preventDefault(); handleScrollTo('bulk-orders'); }} style={{ color: 'white', textDecoration: 'none', fontSize: '14px', fontWeight: '500', cursor: 'pointer', transition: 'color 0.3s' }}>Bulk Orders</a>
-        </li>
+        <li><Link to="/bulk-quote" className={location.pathname === '/bulk-quote' ? 'text-primary active' : ''}>Bulk Quote</Link></li>
         <li><Link to="/about" className={location.pathname === '/about' ? 'text-primary active' : ''}>About</Link></li>
         <li><Link to="/contact" className={location.pathname === '/contact' ? 'text-primary active' : ''}>Contact</Link></li>
       </ul>

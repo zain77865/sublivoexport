@@ -10,6 +10,11 @@ const ProductDetail = ({ products, isLoading, handleAddToCart }) => {
 
   const product = products.find(p => p._id === id || p.id === id || p.id === parseInt(id));
 
+  const currentId = product ? (product._id || product.id) : null;
+  const relatedProducts = products
+    .filter(p => (p._id !== currentId && p.id !== currentId && p.id !== parseInt(currentId)))
+    .slice(0, 4);
+
   if (isLoading) {
     return (
       <div className="glass-panel" style={{ width: '100%', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -65,6 +70,38 @@ const ProductDetail = ({ products, isLoading, handleAddToCart }) => {
       </div>
 
       <ProductReviews productId={product.id || product._id} />
+
+      {/* Related Products Section */}
+      {relatedProducts.length > 0 && (
+        <div className="product-detail-related">
+          <div className="related-header-row">
+            <div>
+              <p className="related-eyebrow">
+                You May Also Like
+              </p>
+              <h3 className="section-title related-main-title">
+                Related Products
+              </h3>
+            </div>
+            <button 
+              onClick={() => { navigate('/shop'); window.scrollTo(0, 0); }} 
+              className="btn-outline related-view-all-btn"
+            >
+              View All Products →
+            </button>
+          </div>
+
+          <div className="related-products-grid">
+            {relatedProducts.map((relProduct) => (
+              <ProductCard 
+                key={relProduct._id || relProduct.id} 
+                product={relProduct} 
+                onAddToCart={handleAddToCart} 
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

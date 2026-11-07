@@ -2,10 +2,10 @@ import React, { useState, useRef } from 'react';
 import { 
   Globe, Truck, Award, ChevronLeft, ChevronRight, 
   ArrowRight, CheckCircle, Star, Package, MessageCircle,
-  Phone, Mail, ShoppingBag, Zap, Shield, Users
+  Phone, Mail, ShoppingBag, Zap, Shield, Users, Boxes
 } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const PRODUCT_CATEGORIES = [
   { id: 'football', icon: '⚽', name: 'Football Jerseys', desc: 'Custom sublimation & embroidered' },
@@ -27,6 +27,8 @@ const TESTIMONIALS = [
 ];
 
 const Home = ({ products, handleAddToCart, navigate }) => {
+  const localNavigate = useNavigate();
+  const goTo = navigate || localNavigate;
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [activeCategory, setActiveCategory] = useState(null);
   const carouselRef = useRef(null);
@@ -51,7 +53,7 @@ const Home = ({ products, handleAddToCart, navigate }) => {
   };
 
   const handleEmail = () => {
-    window.location.href = 'mailto:sublivoexport@gmail.com';
+    window.location.href = 'mailto:sublivoxexport@gmail.com';
   };
 
   const handleInstagram = () => {
@@ -278,23 +280,61 @@ const Home = ({ products, handleAddToCart, navigate }) => {
                 { qty: '50–200 pcs', discount: 'Standard Rate', color: 'var(--text-muted)' },
                 { qty: '200–500 pcs', discount: '5–10% Discount', color: 'var(--secondary)' },
                 { qty: '500–1000 pcs', discount: '10–20% Discount', color: 'var(--primary)' },
-                { qty: '1000+ pcs', discount: 'Best Price + Free Samples', color: '#ff6b6b' },
+                { qty: '1000+ pcs', discount: 'Best Price', color: '#ff6b6b' },
               ].map((t, i) => (
-                <div key={i} className="bulk-tier glass" style={{ borderLeft: `3px solid ${t.color}` }}>
+                <div key={i} className="bulk-tier glass" >
                   <div style={{ fontWeight: '700', color: 'white' }}>{t.qty}</div>
                   <div style={{ fontSize: '12px', color: t.color, fontWeight: '600' }}>{t.discount}</div>
                 </div>
               ))}
             </div>
-            <button onClick={handleWhatsApp} className="btn-primary" style={{ marginTop: '18px', padding: '10px 22px', fontSize: '13.5px' }}>
+            <button onClick={() => goTo('/bulk-quote')} className="btn-primary" style={{ marginTop: '18px', padding: '10px 22px', fontSize: '13.5px' }}>
               Get Bulk Quote <Package size={15} />
             </button>
           </div>
 
-          {/* Inquiry Form */}
-          <div id="inquiry-form" className="sublivo-inquiry-form glass">
-            <h3 style={{ marginBottom: '16px', fontSize: '17px', fontWeight: '700' }}>📋 Get a Free Price Quote</h3>
-            <InquiryForm />
+          {/* Big Bulk Order Image with Circle Border */}
+          <div 
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              minHeight: '280px',
+              userSelect: 'none'
+            }}
+          >
+            <div 
+              style={{
+                width: '330px',
+                height: '330px',
+                maxWidth: '85vw',
+                maxHeight: '85vw',
+                borderRadius: '50%',
+                overflow: 'hidden',
+                border: '4px solid var(--primary)',
+                boxShadow: '0 0 45px rgba(49, 205, 106, 0.45), 0 15px 35px rgba(0,0,0,0.6)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: '#111'
+              }}
+            >
+              <img 
+                src="/buy-bulk.jpg" 
+                onError={(e) => {
+                  e.currentTarget.src = "https://thumbs.dreamstime.com/z/buy-bulk-word-many-boxes-product-volume-quantity-surrounded-cardboard-packages-wholesale-store-to-illustrate-31717243.jpg";
+                }}
+                alt="Buy in Bulk - Wholesale Sportswear"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block'
+                }}
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -321,6 +361,138 @@ const Home = ({ products, handleAddToCart, navigate }) => {
               <p>{s.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ===== FACTORY & PRODUCTION VIDEOS ===== */}
+      <section id="factory-tour" className="sublivo-section">
+        <div className="sublivo-section-header">
+          <p className="sublivo-section-eyebrow">Real Factory Footage</p>
+          <h2 className="sublivo-section-title">
+            Inside Our <span style={{ color: 'var(--primary)' }}>Production Facility</span>
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '14px', maxWidth: '640px', margin: '0 auto', lineHeight: '1.6' }}>
+            Watch our skilled workers and dedicated manufacturing lines in action in Sialkot, Pakistan. Real craftsmanship, authentic export quality.
+          </p>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '24px',
+          marginTop: '28px'
+        }}>
+          {/* Video 1: Stitching Floor */}
+          <div className="glass" style={{
+            borderRadius: '20px',
+            overflow: 'hidden',
+            border: '1px solid rgba(49, 205, 106, 0.2)',
+            background: 'rgba(15, 20, 15, 0.65)',
+            boxShadow: '0 12px 30px rgba(0,0,0,0.45)',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <div style={{ position: 'relative', width: '100%', height: '260px', background: '#000', overflow: 'hidden' }}>
+              <video 
+                src="/Production.mp4" 
+                autoPlay 
+                muted 
+                loop 
+                playsInline 
+                controls 
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block'
+                }}
+              />
+              <div style={{
+                position: 'absolute',
+                top: '12px',
+                left: '12px',
+                background: 'rgba(0,0,0,0.7)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(49, 205, 106, 0.4)',
+                padding: '4px 12px',
+                borderRadius: '20px',
+                fontSize: '11px',
+                fontWeight: '700',
+                color: 'var(--primary)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                pointerEvents: 'none'
+              }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--primary)', display: 'inline-block' }} />
+                Stitching & Assembly
+              </div>
+            </div>
+            <div style={{ padding: '20px' }}>
+              <h3 style={{ fontSize: '17px', fontWeight: '700', color: 'white', marginBottom: '6px' }}>
+                High-Speed Manufacturing Line
+              </h3>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5', margin: 0 }}>
+                Skilled craftsmen operating precision sewing lines to produce durable, high-performance teamwear and uniforms.
+              </p>
+            </div>
+          </div>
+
+          {/* Video 2: Assembly & Quality Checking */}
+          <div className="glass" style={{
+            borderRadius: '20px',
+            overflow: 'hidden',
+            border: '1px solid rgba(245, 166, 35, 0.2)',
+            background: 'rgba(15, 20, 15, 0.65)',
+            boxShadow: '0 12px 30px rgba(0,0,0,0.45)',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <div style={{ position: 'relative', width: '100%', height: '260px', background: '#000', overflow: 'hidden' }}>
+              <video 
+                src="/Video2.mp4" 
+                autoPlay 
+                muted 
+                loop 
+                playsInline 
+                controls 
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block'
+                }}
+              />
+              <div style={{
+                position: 'absolute',
+                top: '12px',
+                left: '12px',
+                background: 'rgba(0,0,0,0.7)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(245, 166, 35, 0.4)',
+                padding: '4px 12px',
+                borderRadius: '20px',
+                fontSize: '11px',
+                fontWeight: '700',
+                color: '#f5a623',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                pointerEvents: 'none'
+              }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f5a623', display: 'inline-block' }} />
+                Finishing & Quality Check
+              </div>
+            </div>
+            <div style={{ padding: '20px' }}>
+              <h3 style={{ fontSize: '17px', fontWeight: '700', color: 'white', marginBottom: '6px' }}>
+                Finishing, Inspection & Packaging
+              </h3>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5', margin: 0 }}>
+                Every single garment is examined for seam integrity, wash-fastness, and professional labeling before international shipment.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -357,65 +529,6 @@ const Home = ({ products, handleAddToCart, navigate }) => {
         </div>
       </section>
     </>
-  );
-};
-
-/* ===== INQUIRY FORM COMPONENT ===== */
-const InquiryForm = () => {
-  const [form, setForm] = useState({ name: '', country: '', product: '', quantity: '', design: '', email: '' });
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    // Send via WhatsApp
-    const msg = `Hello SublivoExport!\n\nNew Inquiry:\n👤 Name: ${form.name}\n🌍 Country: ${form.country}\n📧 Email: ${form.email}\n📦 Product: ${form.product}\n🔢 Quantity: ${form.quantity}\n🎨 Design Notes: ${form.design}`;
-    setTimeout(() => {
-      window.open(`https://wa.me/923204615100?text=${encodeURIComponent(msg)}`, '_blank');
-      setLoading(false);
-      setSubmitted(true);
-    }, 500);
-  };
-
-  if (submitted) {
-    return (
-      <div style={{ textAlign: 'center', padding: '30px' }}>
-        <CheckCircle size={48} color="#4ade80" style={{ marginBottom: '16px' }} />
-        <h4 style={{ color: '#4ade80', marginBottom: '8px' }}>Inquiry Sent!</h4>
-        <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>We'll reply within 2 hours. Thank you!</p>
-        <button onClick={() => setSubmitted(false)} className="btn-outline" style={{ marginTop: '16px', fontSize: '13px', padding: '8px 20px' }}>Send Another</button>
-      </div>
-    );
-  }
-
-  return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-      <input type="text" name="name" placeholder="Your Full Name *" value={form.name} onChange={handleChange} required className="inquiry-input" />
-      <input type="text" name="country" placeholder="Your Country *" value={form.country} onChange={handleChange} required className="inquiry-input" />
-      <input type="email" name="email" placeholder="Your Email Address" value={form.email} onChange={handleChange} className="inquiry-input" />
-      <select name="product" value={form.product} onChange={handleChange} required className="inquiry-input">
-        <option value="">Select Product Type *</option>
-        <option value="Football Jerseys">⚽ Football Jerseys (Sublimation & Embroidered)</option>
-        <option value="Rugby Shirts">🏉 Rugby Shirts (Heavy-Duty Performance)</option>
-        <option value="T-Shirts">👕 T-Shirts (Custom Print & Wholesale)</option>
-        <option value="Polo Shirts">🎽 Polo Shirts (Corporate & Sports)</option>
-        <option value="Hoodies & Jackets">🧥 Hoodies & Jackets (Fleece & Pullover)</option>
-        <option value="Shorts & Bottoms">🩳 Shorts & Bottoms (Mesh & Dry-Fit)</option>
-        <option value="Sports Shoes">👟 Sports Shoes (Turf, Indoor & Outdoor)</option>
-        <option value="Accessories">🧤 Accessories (Gloves, Socks, Caps & Bags)</option>
-        <option value="Other">Other / Full Custom Kit</option>
-      </select>
-      <input type="text" name="quantity" placeholder="Quantity (e.g. 500 pcs) *" value={form.quantity} onChange={handleChange} required className="inquiry-input" />
-      <textarea name="design" placeholder="Design details (colors, logo, name/number, etc.)" value={form.design} onChange={handleChange} rows={3} className="inquiry-input" style={{ resize: 'vertical' }} />
-      <button type="submit" className="btn-primary" style={{ padding: '11px', justifyContent: 'center', fontSize: '13.5px' }} disabled={loading}>
-        {loading ? 'Sending...' : ' Send Inquiry via WhatsApp'}
-      </button>
-    </form>
   );
 };
 

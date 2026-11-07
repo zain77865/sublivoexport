@@ -20,6 +20,7 @@ import TermsConditions from './pages/TermsConditions';
 import ReturnPolicy from './pages/ReturnPolicy';
 import AddAdmin from './pages/AddAdmin';
 import SubAdminLogin from './pages/SubAdminLogin';
+import BulkQuote from './pages/BulkQuote';
 function RouteSEOAndScroll() {
   const { pathname, hash } = useLocation();
 
@@ -52,6 +53,10 @@ function RouteSEOAndScroll() {
       '/contact': {
         title: 'Contact Us & Request Bulk Wholesale Quote | SublivoExport',
         desc: 'Get in touch with SublivoExport for bulk custom sportswear orders, free digital mockups, sample requests, and wholesale inquiries. Direct WhatsApp: +92 320 4615100.'
+      },
+      '/bulk-quote': {
+        title: 'Streetwear & Sportswear Bulk Inquiry Form | SublivoExport',
+        desc: 'Request custom sample OEM and bulk manufacturing quotation for streetwear, sportswear, hoodies, t-shirts, jerseys and tracksuits. Factory-direct export rates from Sialkot.'
       },
       '/privacy-policy': {
         title: 'Privacy Policy | SublivoExport',
@@ -244,6 +249,8 @@ function App() {
         <Route path="/checkout/:id" element={<Checkout products={products} cartItems={cartItems} setCartItems={setCartItems} />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/bulk-quote" element={<BulkQuote />} />
+        <Route path="/street-wear" element={<Navigate to="/bulk-quote" replace />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-conditions" element={<TermsConditions />} />
         <Route path="/return-policy" element={<ReturnPolicy />} />

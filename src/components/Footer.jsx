@@ -118,7 +118,7 @@ const Footer = ({ currentPage }) => {
                     </a>
 
                     <a 
-                      href="mailto:sublivoexport@gmail.com" 
+                      href="mailto:sublivoxexport@gmail.com" 
                       title="Email Us"
                       style={{ 
                         width: '42px', 
